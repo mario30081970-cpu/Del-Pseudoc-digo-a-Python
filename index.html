@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f2c6b">
+<meta name="description" content="Práctica interactiva: Del Pseudocódigo a Python. Material N°21">
+<title>Del Pseudocódigo a Python · Práctica Interactiva</title>
+<style>
+  :root{
+    --azul:#1d4ed8;
+    --azul-osc:#0f2c6b;
+    --ok:#15803d;
+    --err:#b91c1c;
+    --mid:#b45309;
+    --bg:#eef3fa;
+    --card:#ffffff;
+    --texto:#132039;
+    --borde:#d7e0ee;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    padding:0 0 48px;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    color:var(--texto);
+    font-size:16px;
+    line-height:1.55;
+    background-color:var(--bg);
+    background-image:
+      linear-gradient(rgba(29,78,216,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(29,78,216,.07) 1px,transparent 1px);
+    background-size:22px 22px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(135deg,#0f2c6b,#1d4ed8);
+    color:#fff;
+    padding:12px 14px 10px;
+    box-shadow:0 4px 16px rgba(15,44,107,.35);
+  }
+  .barra-sup{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .marca{display:flex;align-items:center;gap:10px;min-width:0;}
+  .logo{
+    flex:0 0 auto;
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,#ffd43b,#3b82f6);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:17px;color:#0f2c6b;
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);
+  }
+  header h1{font-size:15px;margin:0;line-height:1.2;font-weight:800;letter-spacing:.2px;}
+  header p{margin:2px 0 0;font-size:11.5px;opacity:.85;}
+  .marcador{
+    flex:0 0 auto;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:12px;
+    padding:5px 11px;
+    font-weight:800;
+    font-size:18px;
+    line-height:1;
+    text-align:center;
+  }
+  .marcador small{font-size:11px;font-weight:600;opacity:.85;}
+  .barra-progreso{
+    margin-top:9px;height:6px;border-radius:99px;
+    background:rgba(255,255,255,.22);overflow:hidden;
+  }
+  .barra-progreso span{
+    display:block;height:100%;width:0%;
+    background:linear-gradient(90deg,#4ade80,#ffd43b);
+    border-radius:99px;transition:width .45s ease;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  main{max-width:720px;margin:0 auto;padding:14px 14px 0;}
+  section.card{
+    background:var(--card);
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 3px 14px rgba(19,32,57,.09);
+    border:1px solid var(--borde);
+  }
+  h2{
+    font-size:17.5px;margin:0 0 12px;
+    display:flex;align-items:center;gap:10px;
+    color:var(--azul-osc);line-height:1.25;
+  }
+  .num{
+    flex:0 0 auto;
+    width:30px;height:30px;border-radius:9px;
+    background:var(--azul);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:800;
+  }
+  h3{font-size:15.5px;margin:0 0 8px;color:var(--azul-osc);}
+  p{margin:0 0 10px;}
+  .intro{font-size:14.5px;color:#43506b;}
+
+  /* ---------- FORM ---------- */
+  label{display:block;font-weight:700;font-size:14px;margin:0 0 6px;color:#2a3a55;}
+  input[type=text]{
+    width:100%;
+    min-height:52px;
+    font-size:16px;
+    font-family:inherit;
+    padding:12px 14px;
+    border-radius:13px;
+    border:2px solid var(--borde);
+    background:#f8fbff;
+    color:var(--texto);
+    margin-bottom:14px;
+    outline:none;
+  }
+  input[type=text]:focus{border-color:var(--azul);background:#fff;}
+
+  /* ---------- REGLAS ---------- */
+  details.regla{
+    background:#f7faff;
+    border:2px solid #dbe7fb;
+    border-radius:14px;
+    margin-bottom:10px;
+    overflow:hidden;
+  }
+  details.regla summary{
+    padding:14px;
+    font-weight:700;
+    color:var(--azul-osc);
+    cursor:pointer;
+    list-style:none;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    min-height:54px;
+    font-size:15px;
+  }
+  details.regla summary::-webkit-details-marker{display:none;}
+  details.regla summary .circulo{
+    background:var(--azul);color:#fff;
+    width:28px;height:28px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:800;flex:0 0 auto;
+  }
+  details.regla summary .flecha{margin-left:auto;font-size:20px;color:var(--azul);transition:transform .2s;}
+  details.regla[open] summary .flecha{transform:rotate(90deg);}
+  details.regla[open] summary{background:#e8eefb;}
+  .regla-cuerpo{padding:0 14px 14px;font-size:14.5px;color:#33415c;}
+  .regla-cuerpo code{
+    background:#e6edfb;padding:2px 6px;border-radius:6px;
+    font-family:"Courier New",monospace;font-size:13.5px;color:#0f2c6b;
+  }
+  .aviso{
+    background:#fff7e6;border-left:5px solid #f59e0b;
+    border-radius:10px;padding:11px 13px;font-size:14px;color:#7c4a03;margin-top:6px;
+  }
+
+  /* ---------- CÓDIGO ---------- */
+  pre.pseint{
+    background:#f1f6ff;
+    border-left:5px solid var(--azul);
+    border-radius:10px;
+    padding:12px;
+    overflow-x:auto;
+    font-family:"Courier New",monospace;
+    font-size:14px;
+    line-height:1.55;
+    color:#0f2c6b;
+    margin:0 0 12px;
+    white-space:pre;
+  }
+  textarea.code{
+    width:100%;
+    min-height:160px;
+    font-family:"Courier New",monospace;
+    font-size:15px;
+    line-height:1.65;
+    background:#0f172a;
+    color:#e6edf7;
+    border-radius:13px;
+    padding:12px;
+    border:2px solid #26324a;
+    resize:vertical;
+    white-space:pre-wrap;
+    overflow-wrap:break-word;
+    tab-size:4;
+    outline:none;
+  }
+  textarea.code:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.25);}
+  .etiqueta-codigo{
+    display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.6px;
+    text-transform:uppercase;color:#64748b;margin:0 0 6px;
+  }
+
+  /* ---------- BOTONES ---------- */
+  .btn{
+    display:block;width:100%;
+    min-height:54px;
+    border:none;border-radius:14px;
+    font-size:16.5px;font-weight:800;
+    font-family:inherit;
+    cursor:pointer;
+    padding:14px 16px;
+    transition:transform .08s;
+  }
+  .btn:active{transform:translateY(2px);}
+  .btn-primario{background:var(--azul);color:#fff;box-shadow:0 4px 0 #16389b;}
+  .btn-primario:active{box-shadow:0 2px 0 #16389b;}
+  .btn-ok{background:var(--ok);color:#fff;box-shadow:0 4px 0 #0d5c2b;}
+  .btn-ok:active{box-shadow:0 2px 0 #0d5c2b;}
+  .btn-sec{background:#e8eefb;color:var(--azul-osc);border:2px solid #c7d7f5;box-shadow:none;}
+  .btn-mini{
+    min-height:44px;font-size:14px;font-weight:700;
+    border-radius:11px;flex:1 1 0;
+    background:#eef3fd;color:#1e3a8a;border:2px solid #cfdcf7;
+    padding:10px 8px;
+  }
+  .fila-botones{display:flex;gap:9px;margin-top:10px;}
+  .fila-botones .btn{flex:1 1 0;}
+
+  /* ---------- RESULTADOS ---------- */
+  ul.res{list-style:none;padding:0;margin:12px 0 0;font-size:14.5px;}
+  ul.res li{
+    padding:9px 11px;border-radius:11px;margin-bottom:7px;
+    display:flex;gap:9px;align-items:flex-start;line-height:1.45;
+  }
+  ul.res li.ok{background:#e7f7ec;color:#14532d;border:1px solid #b7e4c7;}
+  ul.res li.no{background:#fdeaea;color:#7f1d1d;border:1px solid #f5c2c2;}
+  ul.res li code{
+    background:rgba(0,0,0,.07);padding:1px 5px;border-radius:5px;
+    font-family:"Courier New",monospace;font-size:13px;
+  }
+  .feedback{
+    margin-top:10px;padding:11px 13px;border-radius:12px;
+    font-size:14.5px;font-weight:700;
+  }
+  .feedback.ok{background:#e7f7ec;color:#14532d;border:1px solid #b7e4c7;}
+  .feedback.mid{background:#fff7e6;color:#7c4a03;border:1px solid #fcd9a0;}
+  .feedback.no{background:#fdeaea;color:#7f1d1d;border:1px solid #f5c2c2;}
+  .badge{
+    margin-left:auto;font-size:13px;font-weight:800;
+    padding:4px 11px;border-radius:99px;background:#eef3fd;color:#1e3a8a;
+  }
+  .badge-ok{background:#dcfce7;color:#14532d;}
+  .badge-mid{background:#fef3c7;color:#7c4a03;}
+  .badge-no{background:#fee2e2;color:#7f1d1d;}
+  .cabecera-reto{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .cabecera-reto h2{margin:0;}
+
+  .pista{
+    display:none;
+    background:#fff7e6;border-left:5px solid #f59e0b;
+    border-radius:10px;padding:11px 13px;
+    font-size:14px;color:#7c4a03;margin-top:10px;
+  }
+  .pista.visible{display:block;}
+
+  .caja-datos{
+    background:#f7faff;border:2px dashed #c7d7f5;border-radius:14px;
+    padding:12px;font-size:14px;color:#33415c;
+  }
+
+  footer{
+    text-align:center;font-size:12px;color:#7b879e;padding:6px 18px 22px;
+  }
+  @media (min-width:560px){
+    header h1{font-size:17px;}
+    main{padding-top:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="barra-sup">
+    <div class="marca">
+      <div class="logo">Py</div>
+      <div>
+        <h1>Del Pseudocódigo a Python</h1>
+        <p>Material N°21 · Programación Nivel Inicial</p>
+      </div>
+    </div>
+    <div class="marcador"><span id="puntaje">0</span><small>/30</small></div>
+  </div>
+  <div class="barra-progreso"><span id="progreso"></span></div>
+</header>
+
+<main>
+
+  <!-- ============ DATOS DEL ALUMNO ============ -->
+  <section class="card">
+    <h2><span class="num">1</span> Tus datos</h2>
+    <p class="intro">Completá tus datos para que el informe final quede correctamente identificado.</p>
+    <label for="nombre">Nombre y Apellido *</label>
+    <input id="nombre" type="text" placeholder="Ej.: Ana Gómez" autocomplete="name" autocapitalize="words">
+    <label for="curso">Curso *</label>
+    <input id="curso" type="text" placeholder="Ej.: 3° A — Escuela Técnica N°5" autocomplete="off">
+  </section>
+
+  <!-- ============ REGLAS DE ORO ============ -->
+  <section class="card">
+    <h2><span class="num">2</span> Tus 3 Reglas de Oro</h2>
+    <p class="intro">Tocá cada regla para ver el detalle. Son las tres únicas cosas que cambian entre PSeInt y Python.</p>
+
+    <details class="regla">
+      <summary><span class="circulo">1</span> Confiá en tu lógica: ya funciona <span class="flecha">›</span></summary>
+      <div class="regla-cuerpo">
+        <p>Tu algoritmo en pseudocódigo ya está resuelto. Python no te pide aprender a programar de nuevo: solo te pide aprender un <strong>nuevo vocabulario</strong> para ejecutar lo que ya sabés.</p>
+        <p>El pseudocódigo es tu <em>plano teórico</em>; Python es tu <em>herramienta de construcción</em>.</p>
+      </div>
+    </details>
+
+    <details class="regla">
+      <summary><span class="circulo">2</span> Los dos puntos <code>:</code> abren el bloque <span class="flecha">›</span></summary>
+      <div class="regla-cuerpo">
+        <p>El símbolo <code>:</code> reemplaza a <code>Entonces</code> y a <code>Hacer</code>. Es la señal que le dice a Python: <em>“preparate, lo que sigue indentado pertenece a esta condición”</em>.</p>
+        <p>Se usa en <code>if</code>, <code>else</code>, <code>while</code> y <code>for</code>.</p>
+      </div>
+    </details>
+
+    <details class="regla">
+      <summary><span class="circulo">3</span> Adiós <code>FinSi</code>: ahora manda la indentación <span class="flecha">›</span></summary>
+      <div class="regla-cuerpo">
+        <p>En PSeInt, palabras como <code>FinSi</code> o <code>FinMientras</code> eran <strong>paredes visibles</strong> que cerraban un bloque. Python elimina esas paredes y las reemplaza por <strong>4 espacios</strong> al inicio de cada línea.</p>
+        <p>El bloque termina cuando la sangría vuelve atrás.</p>
+        <div class="aviso">
+          ⚠️ <strong>La indentación NO es estética: es sintaxis obligatoria.</strong> Un solo espacio mal puesto produce <code>IndentationError</code> y rompe la ejecución del programa.
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ RETO 1 ============ -->
+  <section class="card">
+    <div class="cabecera-reto">
+      <h2><span class="num">3</span> Reto 1 · La señal que falta</h2>
+      <span class="badge" id="badge1">0 / 10</span>
+    </div>
+    <p class="intro">Este condicional fue traducido de PSeInt a Python, pero le falta la <strong>señal que abre el bloque</strong> y el <code>print</code> quedó desalineado. Corregilo y comprobá.</p>
+
+    <span class="etiqueta-codigo">Pseudocódigo (PSeInt)</span>
+    <pre class="pseint">Si edad >= 18 Entonces
+    Escribir 'Eres mayor de edad'
+FinSi</pre>
+
+    <span class="etiqueta-codigo">Tu código en Python</span>
+    <textarea id="code1" class="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off">edad = int(input('Ingresa tu edad: '))
+if edad >= 18
+print('Eres mayor de edad')</textarea>
+
+    <div class="fila-botones">
+      <button class="btn btn-mini" type="button" onclick="indentar('code1', false)">⇥ Indentar 4 espacios</button>
+      <button class="btn btn-mini" type="button" onclick="indentar('code1', true)">⇤ Quitar sangría</button>
+    </div>
+    <div class="fila-botones">
+      <button class="btn btn-sec" type="button" onclick="togglePista('pista1')">💡 Pista</button>
+      <button class="btn btn-primario" type="button" onclick="comprobar(1)">✓ Comprobar reto 1</button>
+    </div>
+    <div class="pista" id="pista1">
+      La línea del <code>if</code> debe terminar con <strong>dos puntos</strong> (eso reemplaza a “Entonces”). Y el <code>print</code> que está adentro del condicional debe empezar con <strong>4 espacios</strong>. La palabra <code>FinSi</code> ya no existe: se borra.
+    </div>
+    <ul class="res" id="res1"></ul>
+    <div class="feedback" id="feedback1" style="display:none;"></div>
+  </section>
+
+  <!-- ============ RETO 2 ============ -->
+  <section class="card">
+    <div class="cabecera-reto">
+      <h2><span class="num">4</span> Reto 2 · IndentationError</h2>
+      <span class="badge" id="badge2">0 / 10</span>
+    </div>
+    <p class="intro">Este programa produce un <code>IndentationError</code>: Python no sabe qué instrucciones pertenecen al <code>if</code> y cuáles al <code>else</code>. Arreglá la sangría.</p>
+
+    <span class="etiqueta-codigo">Código con error</span>
+    <textarea id="code2" class="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off">if usuario_valido:
+print('Acceso concedido')
+iniciar_sesion()
+else:
+print('Acceso denegado')
+reiniciar_intento()</textarea>
+
+    <div class="fila-botones">
+      <button class="btn btn-mini" type="button" onclick="indentar('code2', false)">⇥ Indentar 4 espacios</button>
+      <button class="btn btn-mini" type="button" onclick="indentar('code2', true)">⇤ Quitar sangría</button>
+    </div>
+    <div class="fila-botones">
+      <button class="btn btn-sec" type="button" onclick="togglePista('pista2')">💡 Pista</button>
+      <button class="btn btn-primario" type="button" onclick="comprobar(2)">✓ Comprobar reto 2</button>
+    </div>
+    <div class="pista" id="pista2">
+      Colocá el cursor en una línea y usá el botón <strong>“Indentar 4 espacios”</strong> (o seleccioná varias líneas para indentarlas juntas). Las líneas <code>else:</code> y <code>if ...:</code> van al mismo nivel, sin espacios adelante. Todo lo de adentro lleva 4 espacios.
+    </div>
+    <ul class="res" id="res2"></ul>
+    <div class="feedback" id="feedback2" style="display:none;"></div>
+  </section>
+
+  <!-- ============ RETO 3 ============ -->
+  <section class="card">
+    <div class="cabecera-reto">
+      <h2><span class="num">5</span> Reto 3 · Traducí el bucle</h2>
+      <span class="badge" id="badge3">0 / 10</span>
+    </div>
+    <p class="intro">Escribí desde cero la versión en Python de este bucle <code>Mientras ... Hacer</code>. Usá el diccionario de traducción.</p>
+
+    <span class="etiqueta-codigo">Pseudocódigo (PSeInt)</span>
+    <pre class="pseint">Definir contador Como Entero
+contador = 1
+Mientras contador <= 3 Hacer
+    Escribir contador
+    contador = contador + 1
+FinMientras</pre>
+
+    <div class="caja-datos">
+      <strong>Diccionario rápido:</strong><br>
+      <code>Mientras x &lt; 10 Hacer</code> → <code>while x &lt; 10:</code><br>
+      <code>Escribir contador</code> → <code>print(contador)</code><br>
+      <code>Definir ... Como Entero</code> → (no se declara: Python deduce el tipo solo)
+    </div>
+
+    <span class="etiqueta-codigo" style="margin-top:12px;">Tu código en Python</span>
+    <textarea id="code3" class="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" placeholder="Escribí aquí tu traducción..."></textarea>
+
+    <div class="fila-botones">
+      <button class="btn btn-mini" type="button" onclick="indentar('code3', false)">⇥ Indentar 4 espacios</button>
+      <button class="btn btn-mini" type="button" onclick="indentar('code3', true)">⇤ Quitar sangría</button>
+    </div>
+    <div class="fila-botones">
+      <button class="btn btn-sec" type="button" onclick="togglePista('pista3')">💡 Pista</button>
+      <button class="btn btn-primario" type="button" onclick="comprobar(3)">✓ Comprobar reto 3</button>
+    </div>
+    <div class="pista" id="pista3">
+      Empezá con <code>contador = 1</code> (sin declarar tipo). Después <code>while contador &lt;= 3:</code>. Las dos líneas de adentro van con 4 espacios. La palabra <code>FinMientras</code> no se escribe: el bucle termina cuando la sangría vuelve atrás.
+    </div>
+    <ul class="res" id="res3"></ul>
+    <div class="feedback" id="feedback3" style="display:none;"></div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="card">
+    <h2><span class="num">6</span> Reflexión y entrega</h2>
+    <p class="intro">Respondé brevemente y generá tu informe para descargar.</p>
+    <label for="reflexion">¿Qué fue lo más difícil de la traducción a Python y cómo lo resolviste?</label>
+    <textarea id="reflexion" class="code" style="min-height:120px;background:#f8fbff;color:#132039;border-color:#d7e0ee;font-family:inherit;font-size:15px;line-height:1.5;"
+      placeholder="Escribí tu respuesta con tus palabras..."></textarea>
+
+    <div style="margin-top:14px;">
+      <button class="btn btn-ok" type="button" onclick="generarInforme()">📄 Generar Informe y Descargar Archivo</button>
+    </div>
+    <p id="msg-descarga" class="feedback ok" style="display:none;margin-top:12px;"></p>
+  </section>
+
+  <footer>
+    Material N°21 · Del Pseudocódigo a Python · Actividad autocontenida (funciona sin conexión)
+  </footer>
+</main>
+
+<script>
+/* ============================================================
+   ESTADO GLOBAL
+   ============================================================ */
+const estado = {};
+
+const INFO_RETO = {
+  1:{titulo:"Reto 1 — La señal que falta (dos puntos e indentación)",
+     consigna:"Traducir el condicional de PSeInt a Python colocando los dos puntos y la indentación correcta."},
+  2:{titulo:"Reto 2 — IndentationError",
+     consigna:"Corregir la sangría del bloque if / else para que Python reconozca los bloques."},
+  3:{titulo:"Reto 3 — Traducir un bucle Mientras",
+     consigna:"Traducir el bucle Mientras ... Hacer a un while de Python respetando la indentación."}
+};
+
+const RETOS = {
+  1:{max:10, validar: validarReto1},
+  2:{max:10, validar: validarReto2},
+  3:{max:10, validar: validarReto3}
+};
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function $(id){ return document.getElementById(id); }
+
+function lineas(codigo){
+  return String(codigo)
+    .replace(/\r/g,'')
+    .split('\n')
+    .map(l => l.replace(/\t/g,'    ').replace(/\s+$/,''));
+}
+function lineasUtiles(codigo){
+  return lineas(codigo).filter(l => l.trim() !== '');
+}
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+function bloqueDoc(codigo){
+  return esc(codigo)
+    .replace(/ /g,'&nbsp;')
+    .replace(/\n/g,'<br>');
+}
+function sinEtiquetas(txt){
+  return String(txt).replace(/<\/?code>/g,'');
+}
+
+/* ============================================================
+   HERRAMIENTA: INDENTAR / DESINDENTAR
+   ============================================================ */
+function indentar(idTextarea, afuera){
+  const ta = $(idTextarea);
+  const val = ta.value;
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+
+  const ini = val.lastIndexOf('\n', start - 1) + 1;
+  let fin = val.indexOf('\n', end);
+  if (fin === -1) fin = val.length;
+
+  const bloqueSel = val.slice(ini, fin);
+  const nuevas = bloqueSel.split('\n').map(l => {
+    if (afuera){ return l.replace(/^ {1,4}/, ''); }
+    return '    ' + l;
+  }).join('\n');
+
+  ta.value = val.slice(0, ini) + nuevas + val.slice(fin);
+  ta.focus();
+  try{ ta.setSelectionRange(ini, ini + nuevas.length); }catch(e){}
+}
+
+function togglePista(id){
+  const el = $(id);
+  el.classList.toggle('visible');
+}
+
+/* ============================================================
+   VALIDACIONES
+   ============================================================ */
+function validarReto1(){
+  const raw = $('code1').value;
+  const ls  = lineasUtiles(raw);
+  const ifL    = ls.find(l => /^\s*if\b/.test(l));
+  const printL = ls.find(l => /print\s*\(/.test(l));
+
+  return [
+    { ok: !!ifL && /:\s*$/.test(ifL), puntos:5,
+      msg:'La línea del <code>if</code> termina con <code>:</code> (reemplaza a “Entonces”).' },
+    { ok: !!printL && /^\s+\S/.test(printL), puntos:3,
+      msg:'El <code>print</code> está indentado (pertenece al bloque del <code>if</code>).' },
+    { ok: !/Entonces|FinSi/i.test(raw), puntos:2,
+      msg:'Se eliminaron las palabras de cierre de PSeInt (<code>Entonces</code>, <code>FinSi</code>).' }
+  ];
+}
+
+function validarReto2(){
+  const ls = lineasUtiles($('code2').value);
+  const busca = (re) => ls.find(l => re.test(l.trim()));
+
+  const a = busca(/^print\s*\(\s*['"]Acceso concedido/);
+  const b = busca(/^iniciar_sesion\s*\(/);
+  const c = busca(/^else\s*:/);
+  const d = busca(/^print\s*\(\s*['"]Acceso denegado/);
+  const e = busca(/^reiniciar_intento\s*\(/);
+
+  return [
+    { ok: !!a && /^\s+\S/.test(a), puntos:2,
+      msg:"<code>print('Acceso concedido')</code> está indentado dentro del <code>if</code>." },
+    { ok: !!b && /^\s+\S/.test(b), puntos:2,
+      msg:'<code>iniciar_sesion()</code> está indentado dentro del <code>if</code>.' },
+    { ok: !!c && !/^\s/.test(c), puntos:2,
+      msg:'<code>else:</code> está alineado con el <code>if</code>, sin sangría.' },
+    { ok: !!d && /^\s+\S/.test(d), puntos:2,
+      msg:"<code>print('Acceso denegado')</code> está indentado dentro del <code>else</code>." },
+    { ok: !!e && /^\s+\S/.test(e), puntos:2,
+      msg:'<code>reiniciar_intento()</code> está indentado dentro del <code>else</code>.' }
+  ];
+}
+
+function validarReto3(){
+  const raw = $('code3').value;
+  const ls  = lineasUtiles(raw);
+
+  const w = ls.find(l => /^\s*while\b/.test(l));
+  const p = ls.find(l => /print\s*\(/.test(l) && /contador/.test(l));
+  const inc = ls.find(l => /^contador\s*(\+=\s*1|=\s*contador\s*\+\s*1)$/.test(l.trim()));
+
+  return [
+    { ok: !!w && /:\s*$/.test(w) && /<=/.test(w), puntos:4,
+      msg:'<code>while contador &lt;= 3:</code> con dos puntos y sin la palabra “Hacer”.' },
+    { ok: !!p && /^\s+\S/.test(p) && /^print\s*\(\s*contador\s*\)$/.test(p.trim()), puntos:2,
+      msg:'<code>print(contador)</code> indentado dentro del bucle.' },
+    { ok: !!inc && /^\s+\S/.test(inc), puntos:2,
+      msg:'El incremento (<code>contador = contador + 1</code> ó <code>contador += 1</code>) está indentado.' },
+    { ok: !/FinMientras|Fin\s*Para|Hacer\s*$/im.test(raw), puntos:2,
+      msg:'Sin palabras de cierre: el bloque termina cuando la sangría vuelve atrás.' }
+  ];
+}
+
+/* ============================================================
+   COMPROBAR Y PINTAR
+   ============================================================ */
+function comprobar(n){
+  const def    = RETOS[n];
+  const checks = def.validar();
+  const puntos = checks.reduce((s,c) => s + (c.ok ? c.puntos : 0), 0);
+
+  estado[n] = { checks, puntos, max: def.max };
+  pintarResultado(n, checks, puntos, def.max);
+  actualizarPuntaje();
+  return estado[n];
+}
+
+function pintarResultado(n, checks, puntos, max){
+  const cont = $('res' + n);
+  cont.innerHTML = checks.map(c =>
+    `<li class="${c.ok ? 'ok' : 'no'}"><span>${c.ok ? '✔' : '✘'}</span><span>${c.msg}</span></li>`
+  ).join('');
+
+  const badge = $('badge' + n);
+  badge.textContent = puntos + ' / ' + max;
+  badge.className = 'badge ' + (puntos === max ? 'badge-ok' : (puntos > 0 ? 'badge-mid' : 'badge-no'));
+
+  const fb = $('feedback' + n);
+  fb.style.display = 'block';
+  if (puntos === max){
+    fb.textContent = '🎉 ¡Excelente! Reto superado por completo.';
+    fb.className = 'feedback ok';
+  } else if (puntos > 0){
+    fb.textContent = '👍 Vas bien. Revisá los puntos marcados en rojo y volvé a comprobar.';
+    fb.className = 'feedback mid';
+  } else {
+    fb.textContent = '🔁 Todavía no es correcto. Leé la pista y volvé a intentarlo.';
+    fb.className = 'feedback no';
+  }
+}
+
+function actualizarPuntaje(){
+  let total = 0;
+  [1,2,3].forEach(n => { if (estado[n]) total += estado[n].puntos; });
+  $('puntaje').textContent = total;
+  const pct = Math.round(total / 30 * 100);
+  $('progreso').style.width = pct + '%';
+}
+
+/* ============================================================
+   GENERAR INFORME .DOC
+   ============================================================ */
+function generarInforme(){
+  const nombre = $('nombre').value.trim();
+  const curso  = $('curso').value.trim();
+
+  if (!nombre){
+    alert('Por favor, ingresá tu Nombre y Apellido antes de generar el informe.');
+    $('nombre').focus();
+    return;
+  }
+  if (!curso){
+    alert('Por favor, ingresá tu Curso antes de generar el informe.');
+    $('curso').focus();
+    return;
+  }
+
+  /* Evaluación final de los 3 retos con el código actual */
+  [1,2,3].forEach(n => comprobar(n));
+
+  let total = 0;
+  [1,2,3].forEach(n => total += estado[n].puntos);
+  const nota = (total / 30 * 10).toFixed(1).replace('.', ',');
+
+  const reflexion = $('reflexion').value.trim() || '(Sin respuesta registrada)';
+  const fecha = new Date().toLocaleString('es-AR', {
+    day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
+  });
+
+  /* --- Detalle por reto --- */
+  let detalle = '';
+  [1,2,3].forEach(n => {
+    const e = estado[n];
+    const codigo = $('code' + n).value.trim() || '(vacío)';
+    detalle += `<h3 style="color:#0f2c6b;margin-bottom:4px;">${INFO_RETO[n].titulo}</h3>`;
+    detalle += `<p style="font-style:italic;color:#43506b;margin:0 0 8px;">${INFO_RETO[n].consigna}</p>`;
+    detalle += `<p style="margin:0 0 4px;"><b>Código entregado por el alumno/a:</b></p>`;
+    detalle += `<p style="font-family:Consolas,'Courier New',monospace;font-size:10pt;background:#f4f6fa;border:1px solid #c9d3e4;padding:8px;line-height:1.5;">${bloqueDoc(codigo)}</p>`;
+    detalle += `<ul style="margin:6px 0 6px 0;">`;
+    e.checks.forEach(c => {
+      detalle += `<li>${c.ok ? '✔ CORRECTO' : '✘ A CORREGIR'} — ${sinEtiquetas(c.msg)}</li>`;
+    });
+    detalle += `</ul>`;
+    detalle += `<p style="margin:0 0 18px;"><b>Puntaje del reto: ${e.puntos} / ${e.max}</b></p>`;
+  });
+
+  /* --- Conclusión pedagógica --- */
+  let conclusion;
+  if (total >= 27){
+    conclusion = 'Dominás la transición de pseudocódigo a Python. Reconocés los dos puntos como apertura de bloque y la indentación de 4 espacios como cierre implícito. Estás listo/a para escribir programas reales.';
+  } else if (total >= 18){
+    conclusion = 'Buen trabajo: comprendiste la lógica general de la traducción. Repasá especialmente el uso de los dos puntos y la consistencia de la sangría, que son los errores más frecuentes.';
+  } else if (total >= 9){
+    conclusion = 'Vas por el camino correcto, pero todavía confundís algunos elementos de PSeInt con Python. Recordá: los dos puntos abren el bloque y la indentación lo cierra; las palabras FinSi y FinMientras ya no se escriben.';
+  } else {
+    conclusion = 'Necesitás repasar el material antes de continuar. Volvé a leer las 3 Reglas de Oro y practicá con los retos nuevamente: tu lógica ya funciona, solo hay que cambiar el vocabulario.';
+  }
+
+  const contenido = `
+    <div style="font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#132039;">
+      <h1 style="color:#0f2c6b;font-size:19pt;margin:0 0 2px;">Informe de Práctica</h1>
+      <p style="font-size:13pt;color:#1d4ed8;margin:0 0 14px;"><b>Del Pseudocódigo a Python — Material N°21</b></p>
+
+      <table style="border-collapse:collapse;width:100%;margin-bottom:16px;">
+        <tr><td style="padding:5px 8px;border:1px solid #c9d3e4;background:#f4f6fa;width:32%;"><b>Alumno/a</b></td>
+            <td style="padding:5px 8px;border:1px solid #c9d3e4;">${esc(nombre)}</td></tr>
+        <tr><td style="padding:5px 8px;border:1px solid #c9d3e4;background:#f4f6fa;"><b>Curso</b></td>
+            <td style="padding:5px 8px;border:1px solid #c9d3e4;">${esc(curso)}</td></tr>
+        <tr><td style="padding:5px 8px;border:1px solid #c9d3e4;background:#f4f6fa;"><b>Fecha y hora</b></td>
+            <td style="padding:5px 8px;border:1px solid #c9d3e4;">${esc(fecha)}</td></tr>
+        <tr><td style="padding:5px 8px;border:1px solid #c9d3e4;background:#f4f6fa;"><b>Puntaje total</b></td>
+            <td style="padding:5px 8px;border:1px solid #c9d3e4;"><b>${total} / 30 puntos</b></td></tr>
+        <tr><td style="padding:5px 8px;border:1px solid #c9d3e4;background:#f4f6fa;"><b>Nota final</b></td>
+            <td style="padding:5px 8px;border:1px solid #c9d3e4;"><b>${nota} / 10</b></td></tr>
+      </table>
+
+      <h2 style="color:#0f2c6b;font-size:14pt;border-bottom:2px solid #1d4ed8;padding-bottom:4px;">Detalle de los retos</h2>
+      ${detalle}
+
+      <h2 style="color:#0f2c6b;font-size:14pt;border-bottom:2px solid #1d4ed8;padding-bottom:4px;">Reflexión del alumno/a</h2>
+      <p style="background:#f4f6fa;border-left:4px solid #1d4ed8;padding:9px;">${esc(reflexion)}</p>
+
+      <h2 style="color:#0f2c6b;font-size:14pt;border-bottom:2px solid #1d4ed8;padding-bottom:4px;">Conclusión del docente / sistema</h2>
+      <p>${conclusion}</p>
+
+      <hr style="border:none;border-top:1px solid #c9d3e4;margin:18px 0;">
+      <p style="font-size:9pt;color:#6b7a94;">
+        Las 3 Reglas de Oro de la transición PSeInt → Python:<br>
+        1) Confiá en tu lógica estructurada: ya funciona.<br>
+        2) Usá <b>:</b> para abrir bloques lógicos (if, while, for).<br>
+        3) Reemplazá las palabras de cierre (FinSi / FinMientras) por 4 espacios de indentación.
+      </p>
+      <p style="font-size:9pt;color:#6b7a94;">Informe generado automáticamente desde la práctica interactiva “Del Pseudocódigo a Python”.</p>
+    </div>
+  `;
+
+  descargarDoc(contenido, 'Informe_PSeInt_a_Python_' + nombre.replace(/[^\wáéíóúÁÉÍÓÚñÑ]+/g,'_') + '.doc');
+
+  const msg = $('msg-descarga');
+  msg.style.display = 'block';
+  msg.textContent = '✅ Listo. Tu puntaje fue ' + total + '/30 (nota ' + nota + '/10). Buscá el archivo en la carpeta "Descargas" de tu celular.';
+}
+
+function descargarDoc(contenidoHTML, nombreArchivo){
+  const encabezado =
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+    'xmlns:w="urn:schemas-microsoft-com:office:word" ' +
+    'xmlns="http://www.w3.org/TR/REC-html40">' +
+    '<head><meta charset="utf-8"><title>Informe de Práctica</title>' +
+    '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View>' +
+    '<w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->' +
+    '<style>@page{size:A4;margin:2cm;} body{font-family:Calibri,Arial,sans-serif;font-size:11pt;} ' +
+    'h1,h2,h3{font-family:Calibri,Arial,sans-serif;} ul{margin-left:18px;} ' +
+    'li{margin-bottom:4px;}</style></head><body>';
+  const pie = '</body></html>';
+
+  const blob = new Blob(['\ufeff', encabezado + contenidoHTML + pie], {type:'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nombreArchivo;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/* ============================================================
+   INICIALIZACIÓN
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', function(){
+  actualizarPuntaje();
+  /* Evita que el teclado de Android agregue mayúscula automática en los textarea de código */
+  ['code1','code2','code3'].forEach(function(id){
+    const ta = $(id);
+    ta.setAttribute('autocapitalize','off');
+    ta.setAttribute('autocorrect','off');
+    ta.setAttribute('spellcheck','false');
+  });
+});
+</script>
+</body>
+</html>
